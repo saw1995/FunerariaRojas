@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewData["Title"] = "ServiciosAdicionales";
+    Layout = "~/Views/Admin/Index.cshtml";
+
+    var ServiciosAdicionales = (List<appFunerariaRojas.Models.Entity.ServicioAdicional>)ViewBag.ServiciosAdicionales;
+}
+
+<div class="modal fade" id="modalAgregarServicio">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">NUEVO SERVICIO ADICIONAL</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-4">
+                                <label for="exampleInputEmail1">Nombre:</label>
+                                <input type="text" class="form-control" id="txtNombre" placeholder="Introduzca nombre">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-12 col-md-12 col-lg-8">
+                                <label for="exampleInputEmail1">Descripción:</label>
+                                <input type="text" class="form-control" id="txtDescripcion" placeholder="Introduzca descripción">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-4">
+                                <label for="exampleInputEmail1">Precio Sugerido:</label>
+                                <input type="number" class="form-control" id="txtPrecio" placeholder="Introduzca nombre" value="0.00">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="agregarServicioAdicional()">Guardar Registro</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-1">
+            <div class="col-sm-12">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Inline Charts</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="card">
+
+                    <!-- /.card-header -->
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <div class="col-12 col-md-6">
+                                <h3>Lista de Servicios Adicionales</h3>
+                            </div>
+
+                            <div class="col-12 col-md-6 text-right">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarServicio">Agregar Nuevo Servicio Adicional</button>
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th class="text-center">Nombre</th>
+                                        <th class="text-center">Descripción</th>
+                                        <th class="text-center" style='width:50px;'>Precio</th>
+                                        <th style='width:50px;'></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="dtCategoria">
+                                    @for(int i = 0; i<= ServiciosAdicionales.Count -1; i++)
+                                    {
+                                    <tr>
+                                        <td>@(i+1)</td>
+                                        <td>@ServiciosAdicionales[i].Nombre</td>
+                                        <td>@ServiciosAdicionales[i].Descripcion</td>
+                                        <td class="text-center">@ServiciosAdicionales[i].Precio</td>
+                                        <td class='text-right py-0 align-middle'>
+                                            <div class='btn-group btn-group-sm'>
+                                                <a href='javascript:void(0);' class='btn btn-info'><i class='fas fa-pencil-alt'></i></a>
+
+                                                <a href='javascript:void(0);' onclick='eliminarServicioAdicional(@ServiciosAdicionales[i].Id)' class='btn btn-danger'><i class='fas fa-trash'></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+
+        });
+
+        function limpiarControladores() {
+            document.getElementById("txtNombre").value = "";
+            document.getElementById("txtDescripcion").value = "";
+            document.getElementById("txtPrecio").value = "0.00";
+        }
+
+        function agregarServicioAdicional() {
+
+            var _nombre = document.getElementById("txtNombre").value;
+            var _descripcion = document.getElementById("txtDescripcion").value;
+            var _precio = document.getElementById("txtPrecio").value;
+
+            if (_nombre == "") {
+                Swal.fire({
+                    icon: 'error', title: 'Nuevo Servicio Adicional', text: "El Campo Nombre no puede estar vacío."
+                });
+            }
+            else if (_descripcion == "") {
+                Swal.fire({
+                    icon: 'error', title: 'Nuevo Servicio Adicional', text: "El campo Descripción no puede estar vacío, intente nuevamente."
+                });
+            }
+            else if (_precio <= 0 ) {
+                Swal.fire({
+                    icon: 'error', title: 'Nuevo Servicio Adicional', text: "El campo precio no puede ser igual o menor a cero, intente nuevamente."
+                });
+            }
+            else {
+
+                var parametros = {
+                    "Nombre": _nombre,
+                    "Descripcion": _descripcion,
+                    "Precio": _precio
+                };
+
+                var _url = "insertarServicioAdicional";
+
+                $.ajax({
+                    url: _url,
+                    type: "POST",
+                    data: parametros,
+                    success: function (data) {
+                        if (data.estado == true) {
+
+
+                            $('#modalAgregarServicio').modal('toggle');
+                            Swal.fire({
+                                icon: 'success', title: 'Nuevo Servicio Adicional', text: "Se agreggo correctamente, " + _nombre
+                            });
+
+                            window.location.href = '@Url.Action("ServiciosAdicionales", "Producto")';
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error', title: 'Nuevo Servicio Adicional', text: "El Servicio adicional " + _nombre + "error: " + data.mensaje
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        function eliminarServicioAdicional(_id) {
+            var parametros = {
+                "estado": false,
+                "id": _id
+            };
+
+            var _url = "actualizarEstadoByIdServicioAdicional";
+
+            Swal
+                .fire({
+                    title: "Eliminar Servicio Adicional",
+                    text: "¿Esta seguro de eliminar el servicio Adicinal?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar",
+                })
+                .then(resultado => {
+                    if (resultado.value == true) {
+                        $.ajax({
+                            url: _url,
+                            type: "POST",
+                            data: parametros,
+                            success: function (data) {
+                                if (data.estado == true) {
+                                    window.location.href = '@Url.Action("ServiciosAdicionales", "Producto")';
+                                }
+                                else {
+                                    Swal.fire({
+                                        icon: 'error', title: "Eliminar Servicio Adicional", text: "La categoria con código " + _id + " no se elimino correctamente, error: " + data.mensaje
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+        }
+    </script>
+}

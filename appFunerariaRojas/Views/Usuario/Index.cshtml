@@ -1,0 +1,372 @@
+﻿@{
+    ViewData["Title"] = "Usuarios";
+    Layout = "~/Views/Admin/Index.cshtml";
+
+    ViewBag.Title = "Usuario";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-0">
+
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <!-- Default box -->
+    <div class="card card-solid">
+
+        <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3">Lista de Usuarios</h3>
+            <ul class="nav nav-pills ml-auto p-2">
+
+                <li class="nav-item dropdown mr-2">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" id="cbSeleccionEstadoUsuario">
+                        <!--Mostramos la ocpiones de cambio-->
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" tabindex="-1" href="javascript:void(0);" onclick="listarUsuarioSeleccionEstado(1)">Habilitados</a>
+                        <a class="dropdown-item" tabindex="-1" href="javascript:void(0);" onclick="listarUsuarioSeleccionEstado(0)">Deshabilitados</a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarUsuario">Agregar Nuevo Usuario</button>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="card-body pb-0">
+            <div class="row d-flex align-items-stretch" id="dtContenedor">
+
+                @*//agregamos los usuario*@
+
+            </div>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</section>
+
+<div class="modal fade" id="modalAgregarUsuario">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">NUEVO USUARIO</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-12">
+
+                        <div class="row">
+                            <div class="form-group col-9 col-sm-5 col-md-4">
+                                <label for="exampleInputEmail1">C.I.:</label>
+                                <input type="number" class="form-control" id="txtCi" placeholder="Introduzca CI">
+                            </div>
+
+                            <div class="form-group col-3 col-sm-2 col-md-2">
+                                <label for="exampleInputEmail1">EXP.:</label>
+                                <select class="form-control" id="cbExpedicion">
+                                    <option value="LP">LP</option>
+                                    <option value="CB">CB</option>
+                                    <option value="SC">SC</option>
+                                    <option value="PT">PT</option>
+                                    <option value="OR">OR</option>
+                                    <option value="CH">CH</option>
+                                    <option value="TJ">TJ</option>
+                                    <option value="BN">BN</option>
+                                    <option value="PD">PD</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="form-group col-12 col-sm-9 col-md-4">
+                                <label for="exampleInputEmail1">Nombre(s):</label>
+                                <input type="text" class="form-control" id="txtNombre" placeholder="Introduzca el Nombre">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-6 col-md-4">
+                                <label for="exampleInputEmail1">Apellido paterno:</label>
+                                <input type="text" class="form-control" id="txtAppaterno" placeholder="Introduzca Apellido paterno">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-6 col-md-4">
+                                <label for="exampleInputEmail1">Apellido Materno:</label>
+                                <input type="text" class="form-control" id="txtApmaterno" placeholder="Introduzca Apellido materno">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="form-group col-12 col-sm-4 col-md-4">
+                                <label for="exampleInputEmail1">Cargo/Rol:</label>
+                                <select class="form-control" id="cbRol">
+                                    <option value="1">Administrador</option>
+                                    <option value="2">Vendedor</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-sm-4 col-md-4">
+                                <label for="exampleInputEmail1">Teléfono/Movil:</label>
+                                <input type="text" class="form-control" id="txtTelefono" placeholder="Introduzca # telefono">
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="form-group col-12 col-sm-3">
+                                <label for="exampleInputEmail1">Ciudad:</label>
+                                <select class="form-control" id="cbCiudad">
+                                    <option value="La paz">La paz</option>
+                                    <option value="El Alto">El Alto</option>
+                                    <option value="Santa Cruz">Santa Cruz</option>
+                                    <option value="Cochabamba">Cochabamba</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-12 col-sm-9">
+                                <label for="exampleInputEmail1">Dirección:</label>
+                                <input type="text" class="form-control" id="txtDireccion" placeholder="Introduzca direccion">
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="agregarUsuario()">Guardar Registro</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@section scripts{
+    <script>
+
+        var estadoUsuarios = 1;
+
+        $(document).ready(function () {
+            listarUsuarioSeleccionEstado(1);
+        });
+
+        function alertUsuario(id) {
+            alert(id);
+        }
+
+        function listarUsuarioSeleccionEstado(_estado) {
+
+            var texto = "Usuarios Deshabilitados";
+            if (_estado == 1) {
+                texto = "Usuarios Habilitados";
+                estadoUsuarios = 1;
+            } else {
+                estadoUsuarios = 0;
+            }
+
+            let componente = texto + " <span class='caret'></span>"
+
+            document.getElementById("cbSeleccionEstadoUsuario").innerHTML = componente;
+
+            listaUsuarios(estadoUsuarios);            
+        }
+
+        function listaUsuarios(_estado) {
+            var parametros = {
+                "estado": _estado
+            };
+
+            var _url = "Usuario/listaUsuarioByEstado";
+
+            $.ajax({
+                url: _url,
+                type: "POST",
+                data: parametros,
+                success: function (data) {
+                    
+                    let filas = "";
+                    for (let i = 0; i <= data.length - 1; i++){
+                        filas = filas +
+
+                        "<div class='col-12 col-sm-6 col-md-4 d-flex align-items-stretch'>" + 
+                            "<div class='card bg-light'>" +
+                                "<div class='card-header text-muted border-bottom-0'>" + 
+                                    data[i].rol["nombre"] + 
+                                "</div>" +
+                                "<div class='card-body pt-0'>"+
+                                    "<div class='row'>"+
+                                        "<div class='col-7'>" +
+                                            "<h2 class='lead'><b>" + data[i].usuario["nombre"] + " " + data[i].usuario["appaterno"] + " " + data[i].usuario["apmaterno"] + "</b></h2>" +
+                                            "<p class='text-muted text-sm'><b>C.I.: </b>" + data[i].usuario["ci"] + " EXP. "+ data[i].usuario["ciExp"] + "</p>" +
+                                            "<ul class='ml-4 mb-0 fa-ul text-muted'>" +
+                                                "<li class='small'><span class='fa-li'><i class='fas fa-lg fa-building'></i></span> Dirección: " + data[i].usuario["ciudad"] + " - " + data[i].usuario["direccion"] + "</li>" +
+                                                "<li class='small'><span class='fa-li'><i class='fas fa-lg fa-phone'></i></span> Teléfono: " + data[i].usuario["telefono"] + "</li>" +
+                                            "</ul>" +
+                                        "</div>" +
+                                        "<div class='col-5 text-center'>" +
+                                            "<img src='" + data[i].usuario["foto"] + "' class='img-circle img-fluid'>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>" +
+                                "<div class='card-footer'>"+
+                                    "<div class='text-right'>"+
+                                        "<a href='javascript:void(0);' class='btn btn-sm btn-primary' onclick='alertUsuario(" + data[i].usuario["id"] + ")' >" +
+                                            "<i class='fas fa-user'></i>  Ver Perfil" +
+                                        "</a>"+
+                                        "<a href='javascript:void(0);' class='btn btn-sm bg-danger ml-1' onclick='eliminarUsuario(" + data[i].usuario["id"] + ")' >"+
+                                            "<i class='fas fa-trash'></i>"+
+                                        "</a>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>" +
+                        "</div>"
+                    }
+
+                    document.getElementById("dtContenedor").innerHTML = filas;
+                }
+            });
+        }
+
+
+        function limpiarControladores() {
+            document.getElementById("txtCi").value = "";
+            document.getElementById("cbExpedicion").value = "LP";
+            document.getElementById("txtNombre").value = "";
+            document.getElementById("txtAppaterno").value = "";
+            document.getElementById("txtApmaterno").value = "";
+            document.getElementById("txtTelefono").value = "";
+            document.getElementById("txtDireccion").value = "";
+        }
+
+        function agregarUsuario() {
+
+            var _ci = document.getElementById("txtCi").value;
+            var _ci_exp = document.getElementById("cbExpedicion").value;
+            var _id_rol = document.getElementById("cbRol").value;
+            var _ciudad = document.getElementById("cbCiudad").value;
+            var _nombre = document.getElementById("txtNombre").value;
+            var _appaterno = document.getElementById("txtAppaterno").value;
+            var _apmaterno = document.getElementById("txtApmaterno").value;
+            var _telefono = document.getElementById("txtTelefono").value;
+            var _direccion = document.getElementById("txtDireccion").value;
+
+            if (_ci == "") {
+                Swal.fire({
+                    icon: 'error', title: 'Agregar Usuario', text: "El Campo CI no puede estar vacío."
+                });
+            }
+            else if (_nombre == "") {
+                Swal.fire({
+                    icon: 'error', title: 'Agregar Usuario', text: "El campo Nombre(s) no puede estar vacío, intente nuevamente."
+                });
+            }
+            else if(_appaterno == "") {
+                Swal.fire({
+                    icon: 'error', title: 'Agregar Usuario', text: "El campo Apellido paterno no puede estar vacío, intente nuevamente."
+                });
+            }
+            else if (_telefono == "")
+            {
+                Swal.fire({
+                    icon: 'error', title: 'Agregar Usuario', text: "El campo Teléfono no puede estar vacío, intente nuevamente."
+                });
+            }
+            else {
+                var parametros = {
+                    "Ci": _ci,
+                    "CiExp": _ci_exp,
+                    "IdRol": _id_rol,
+                    "Ciudad": _ciudad,
+                    "Nombre": _nombre,
+                    "Appaterno": _appaterno,
+                    "Apmaterno": _apmaterno,
+                    "Telefono": _telefono,
+                    "Direccion": _direccion
+                };
+
+                var _url = "Usuario/insertarUsuario";
+
+                $.ajax({
+                    url: _url,
+                    type: "POST",
+                    data: parametros,
+                    success: function (data) {
+                        if (data.estado == true) {
+                            listaUsuarios(estadoUsuarios);
+                            limpiarControladores();
+                            $('#modalAgregarUsuario').modal('toggle');
+                            Swal.fire({
+                                icon: 'success', title: 'Validación Usuario', text: "Se agrego con exito el usuario"
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error', title: 'Validación Usuario', text: "El usuario no se agrego correctamente " + data.mensaje
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        function eliminarUsuario(_id) {
+            var parametros = {
+                "estado": false,
+                "id": _id
+            };
+
+            var _url = "Usuario/actualizarEstadoById";
+
+            Swal
+                .fire({
+                    title: "Eliminar Usuario",
+                    text: "¿Esta seguro de eliminar el usuario seleccionado?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar",
+                })
+                .then(resultado => {
+                    if (resultado.value==true) {
+                        $.ajax({
+                            url: _url,
+                            type: "POST",
+                            data: parametros,
+                            success: function (data) {
+                                if (data.estado == true) {
+                                    Swal.fire({
+                                        icon: 'success', title: 'Eliminaciòn', text: "Se Elimino el usuario cone exito."
+                                    });
+                                    listaUsuarios(estadoUsuarios);
+                                }
+                                else {
+                                    Swal.fire({
+                                        icon: 'error', title: 'Eliminaciòn', text: "Existio un error al eliminar el usuario, " + data.mensaje
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+
+            
+        }
+
+    </script>
+}

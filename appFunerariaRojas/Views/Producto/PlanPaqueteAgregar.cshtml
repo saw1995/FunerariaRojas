@@ -1,0 +1,334 @@
+﻿
+@{
+    ViewData["Title"] = "PlanPaqueteAgregar";
+    Layout = "~/Views/Admin/Index.cshtml";
+}
+
+<div class="modal fade" id="modalProductos">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">SELECCIONAR ITEM PRODUCTO</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th class="text-center" style="width: 100px">Código</th>
+                                        <th class="text-center">Detalle</th>
+                                        <th class="text-center" style='width:50px;'>Cajón</th>
+                                        <th style='width:50px;'></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modalServicios">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">SELECCIONAR SERVICIOS ADICIONALES</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th class="text-center" style="width: 100px">Código</th>
+                                        <th class="text-center">Detalle</th>
+                                        <th class="text-center" style='width:50px;'>Cajón</th>
+                                        <th style='width:50px;'></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Agregar Nuevo Plan Paquete</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Inline Charts</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-12 col-md-4">
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Datos del Plan Paquete</h3>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="form-group col-12 col-md-8">
+                                <label for="exampleInputEmail1">Nombre:</label>
+                                <input type="text" class="form-control" id="txtNombre" placeholder="Introduzca el nombre">
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label for="exampleInputEmail1">Descripción:</label>
+                                <input type="text" class="form-control" id="txtDescripcion" placeholder="Introduzca la descripcion">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-6">
+                                <label for="exampleInputEmail1">Precio:</label>
+                                <input type="number" class="form-control" id="txtPrecio" placeholder="Introduzca Precio" value="0.00">
+                            </div>
+
+                            <div class="form-group col-12">
+                                <div class="col-12" style="padding:5px;">
+                                    <input type="file" id="selectArch" accept="image/*" onchange="encodeImageFileAsURL(this)">
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row" id="contenedorImagenes">
+                                            <!--Dibujamos los componentes-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+
+            <div class="col-12 col-md-8">
+                <div class="row">
+                    <div class="col-12">
+
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Lista Productos</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-toggle="modal" data-target="#modalProductos">
+                                        <i class="fas fa-plus"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="row">
+                                    <div class="col-12">
+
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center" style="width: 10px">#</th>
+                                                        <th class="text-center" style="width:100px">Código</th>
+                                                        <th class="text-left">Descripción</th>
+                                                        <th class="text-center" style="width:50px" id="colMedida">U/Medida</th>
+                                                        <th class="text-center" style="width:50px">Precio</th>
+                                                        <th class="text-center" style="width:50px">Cantidad</th>
+                                                        <th class="text-center" style="width:50px">Subtotal</th>
+                                                        <th class="text-center" style="width:10px"></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody id="dtPresentaciones">
+                                                    @*//llenamos los campos con javascripts*@
+                                                </tbody>
+
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="6"><b>Suma Totales:</b></td>
+                                                        <td class="text-right"><b>$1500.88</b></td>
+                                                    </tr>
+                                                </tfoot>
+
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Servicios Adicionales</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-toggle="modal" data-target="#modalServicios">
+                                        <i class="fas fa-plus"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="row">
+                                    <div class="col-12">
+
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center" style="width: 10px">#</th>
+                                                        <th class="text-center" style="width:50%">Nombre</th>
+                                                        <th class="text-left" style="width:50%">Descripción</th>
+                                                        <th class="text-center" style="width:50px">Precio</th>
+                                                        <th class="text-center" style="width:10px"></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody id="dtPresentaciones">
+                                                    @*//llenamos los campos con javascripts*@
+                                                </tbody>
+
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3"><b>Suma Totales:</b></td>
+                                                        <td class="text-right"><b>$1500.88</b></td>
+                                                    </tr>
+                                                </tfoot>
+
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-right p-2 mb-3">
+                        <button class="btn btn-success btn-flat" onclick="insertarRegistros()">Guardar Nuevo Registro</button>
+                        <button class="btn btn-danger btn-flat" onclick="window.location='@Url.Action( "Index", "Producto")'">Cancelar</button>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+@section scripts{
+<script>
+    var base64String = "";
+    var arrayImagenes = [];
+    var index = 0;
+
+    function encodeImageFileAsURL(element) {
+        var file = element.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            base64String = reader.result;
+            agregarImagenToArray();
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function listarImagenes() {
+        let filas = "";
+        for (let i = 0; i <= arrayImagenes.length - 1; i++) {
+
+            filas = filas +
+                "<div class='col-12 col-sx-6 col-md-6 mb-1'>" +
+                "<img class='img-fluid' src='" + arrayImagenes[i].imagen + "' alt='Photo'>" +
+                "<button type='button' onclick='quitarImagenByArray(" + arrayImagenes[i].id + ")'  " +
+                "class='btn btn-block bg-gradient-danger btn-xs' >Quitar</button ></div> "
+        }
+
+        document.getElementById("contenedorImagenes").innerHTML = filas;
+        console.log(arrayImagenes);
+    }
+
+    function agregarImagenToArray() {
+
+        arrayImagenes.push({ id: (index + 1), imagen: base64String });
+        index = index + 1;
+
+        listarImagenes();
+    }
+
+    function quitarImagenByArray(id) {
+
+        arrayImagenes = arrayImagenes.filter(function (img) {
+            return img.id != id;
+        });
+
+        listarImagenes();
+    }
+
+</script>
+}

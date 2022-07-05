@@ -1,0 +1,732 @@
+﻿
+@{
+    ViewData["Title"] = "Agregar";
+    Layout = "~/Views/Admin/Index.cshtml";
+
+    List<appFunerariaRojas.Models.Entity.Categoria> categorias = (List<appFunerariaRojas.Models.Entity.Categoria>)ViewBag.Categorias;
+}
+
+<div class="modal fade" id="modalSeleccionarCategoría">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">SELECCIONAR CATEGORÍA</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th class="text-center" style="width: 100px">Código</th>
+                                        <th class="text-center">Detalle</th>
+                                        <th class="text-center" style='width:50px;'>Cajón</th>
+                                        <th style='width:50px;'></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="dtCategoria">
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Agregar nuevo producto</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Inline Charts</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+
+        <div class="row">
+
+            <div class="col-12 col-md-6">
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Datos del Producto</h3>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="form-group col-12 border border-secondary">
+                                <label for="exampleInputEmail1">Seleccionar categoría:</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h2 class='text-blue text-md' id="lblCategoria"><b>Categoría: </b></h2>
+                                        <h2 class='text-blue text-md' id="lblCajon"><b>Cajón: </b></h2>
+                                    </div>
+
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#modalSeleccionarCategoría">Seleecionar</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-12 col-md-8">
+                                <label for="exampleInputEmail1">Código:</label>
+                                <input type="text" class="form-control" id="txtCodigo" placeholder="Introduzca el código">
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label for="exampleInputEmail1">Descripción:</label>
+                                <input type="text" class="form-control" id="txtDescripcion" placeholder="Introduzca Descripción">
+                            </div>
+
+                            <div class="form-group col-12" id="panelCajonDetalle">
+                                <label for="exampleInputEmail1">Detalle:</label>
+                                <input type="text" class="form-control" id="txtCajonDetalle" placeholder="Introduzca el detalle">
+                            </div>
+
+                            <div class="form-group col-12" id="panelCajonAcabado">
+                                <label for="exampleInputEmail1">Acabado:</label>
+                                <input type="text" class="form-control" id="txtCajonAcabado" placeholder="Introduzca el Acabado">
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Imagenes del producto</h3>
+                    </div>
+
+                    <div class="col-12" style="padding:5px;">
+                        <input type="file" id="selectArch" accept="image/*" onchange="encodeImageFileAsURL(this)">
+                    </div>
+
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row" id="contenedorImagenes">
+                                <!--Dibujamos los componentes-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Presentación del producto</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-toggle="modal" data-target="#modalAgregarPresentacion" onclick="limpiarSrcImg()">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-12">
+                                
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 10px">#</th>
+                                                <th class="text-center" style="width:150px">Img</th>
+                                                <th class="text-left">Descripción</th>
+                                                <th class="text-center" style="width:100px" id="colTamaño">Tamaño</th>
+                                                <th class="text-center" style="width:120px" id="colColor">Color</th>
+                                                <th class="text-center" style="width:50px" id="colMedida">U/Medida</th>
+                                                <th class="text-center" style="width:50px">P/Compra</th>
+                                                <th class="text-center" style="width:50px">P/Venta</th>
+                                                <th class="text-center" style="width:50px">Stock</th>
+                                                <th class="text-center" style="width:10px"></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="dtPresentaciones">
+                                            @*//llenamos los campos con javascripts*@
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-12 text-right p-2 mb-3">
+                <button class="btn btn-success btn-flat" onclick="insertarRegistros()">Guardar Nuevo Registro</button>
+                <button class="btn btn-danger btn-flat" onclick="window.location='@Url.Action( "Index", "Producto")'" >Cancelar</button>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</section>
+
+<div class="modal fade" id="modalAgregarPresentacion">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">AGREGAR PRESENTACIÓN CAJON</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">                    
+
+                    <div class="col-12">
+                        <div class="row">
+
+                            <div class="col-12 col-sm-6">
+                                <label for="exampleInputEmail1">Imagen/Foto:</label>
+                                <!-- La imagen que vamos a usar para previsualizar lo que el usuario selecciona -->
+                                <img id="imagenPrevisualizacion" class="img-fluid" src="~/dist/img/no-image.png" alt="Photo">
+                                <!-- El input para seleccionar los archivos, fíjate en su id -->
+                                <input type="file" id="seleccionArchivos" accept="image/*" onchange="encodeImageFileAsURLPresentacion(this)">
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+
+                                <div class="form-group col-12">
+                                    <label for="exampleInputEmail1">Descripción:</label>
+                                    <input type="text" class="form-control" id="txtDescripcionPresentacion" placeholder="Introduzca descripción">
+                                </div>
+
+                                <div class=" col-12">
+                                    <div class="row">
+                                        <div class="form-group col-12 col-md-6" id="panelMedida">
+                                            <label>Unidad Medida:</label>
+                                            <select class="form-control" id="cbUnidadMedidaPresentacion">
+                                                <option value="Unidad">Unidad</option>
+                                                <option value="Caja">Caja</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-12 col-md-6">
+                                            <label for="exampleInputEmail1">Stock Inicial:</label>
+                                            <input type="number" class="form-control" id="txtStock" value="0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-12" id="panelColor">
+                                    <label>Color:</label>
+                                    <input type="text" class="form-control" id="txtColorPresentacion" placeholder="Introduzca el Color">
+                                </div>
+
+                                <div class="form-group col-12" id="panelTamaño">
+                                    <label>Tamaño Cajón:</label>
+                                    <select class="form-control" id="cbTamañoCajon">
+                                        <option value="Pequeño">Pequeño</option>
+                                        <option value="Mediano">Mediano</option>
+                                        <option value="Grande">Grande</option>
+                                    </select>
+                                </div>
+
+                                <div class=" col-12">
+                                    <div class="row">
+                                        <div class="form-group col-12 col-md-6">
+                                            <label for="exampleInputEmail1">Precio Compra:</label>
+                                            <input type="number" class="form-control" id="txtPrecioCompra" value="0.00">
+                                        </div>
+                                        <div class="form-group col-12 col-md-6">
+                                            <label for="exampleInputEmail1">Precio Venta:</label>
+                                            <input type="number" class="form-control" id="txtPrecioVenta" value="0.00">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                </div>
+                            </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="agregarItemPresentacion()">Agregar presentación</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+@section scripts{
+<script>
+
+    var base64String = "";
+
+    var arrayImagenes = [];
+    var arrayPresentaciones = [];
+
+    var index = 0;
+
+    var base64Presentacion = "";
+
+    var idCategoria = "";
+    var validaCajon = false;
+
+    $(document).ready(function () {
+        arrayImagenes = [];
+        arrayPresentaciones = [];
+
+        listarPresentaciones();
+        listarImagenes();
+
+        mostrarDetalleAcabadoCajon();
+
+        mostrarOcultarOpcionesCajonPresentacion();
+
+        ocultarColumnasPresentacion();
+
+        document.getElementById("panelCajonDetalle").style.display = 'none';
+        document.getElementById("panelCajonAcabado").style.display = 'none';
+
+        document.getElementById("panelMedida").style.display = 'none';
+        document.getElementById("panelColor").style.display = 'none';
+        document.getElementById("panelTamaño").style.display = 'none';
+
+        llenarCategorias();
+    });
+
+    function llenarCategorias() {
+        var parametros = { "estado": 1 };
+
+        var _url = "listaCategoriasByEstado";
+
+        $.ajax({
+            url: _url,
+            type: "POST",
+            data: parametros,
+            success: function (data) {
+                let filas = "";
+                for (let i = 0; i <= data.length - 1; i++) {
+
+                    let cajonValida = "<td class='project-state text-center'><span class='badge badge-success'>SÍ</span></td>";
+
+                    if (data[i]["cajon"] == false) {
+                        cajonValida = "<td class='project-state text-center'><span class='badge badge-danger'>NO</span></td>";
+                    }
+
+                    filas = filas +
+                    "<tr>" +
+                        "<td>" + (i + 1).toString() + "</td>" +
+                        "<td class='text-center'>" + data[i]["id"] + "</td>" +
+                        "<td>" + data[i]["nombre"] + ", " + data[i]["descripcion"] + "</td>" +
+                        cajonValida +
+                        "<td class='text-right py-0 align-middle'>" +
+                            "<button class='btn btn-success btn-xs' onclick='agregarVariablesCategoria(\"" + data[i]["id"] + "\",\"" + data[i]["nombre"] + "\",\"" + data[i]["cajon"] + "\")' " +
+                        ">Seleecionar</button>"+
+                        "</td>" +
+                    "</tr>"
+                }
+
+                document.getElementById("dtCategoria").innerHTML = filas;
+
+            }
+        });
+    }
+
+    function agregarVariablesCategoria(_id, _nombre, _cajon) {
+
+        idCategoria = _id;
+        let lblCategoria = "<b>Categoría: </b>" + _nombre;
+        document.getElementById("lblCategoria").innerHTML = lblCategoria;
+
+        let lblCajon = "<b>Cajón: </b><span class='badge badge-success'>SÍ</span>";
+
+        if (_cajon == 'false') {
+            lblCajon = "<b>Cajón: </b><span class='badge badge-danger'>NO</span>";
+            validaCajon = false;
+        } else {
+            validaCajon = true;
+        }
+
+        document.getElementById("lblCajon").innerHTML = lblCajon;
+
+        $('#modalSeleccionarCategoría').modal('toggle');
+
+        arrayImagenes = [];
+        arrayPresentaciones = [];
+
+        listarPresentaciones();
+        listarImagenes();
+
+        mostrarDetalleAcabadoCajon();
+
+        mostrarOcultarOpcionesCajonPresentacion();
+
+        ocultarColumnasPresentacion();
+    }
+
+    function mostrarDetalleAcabadoCajon(){
+        if (validaCajon == true) {
+            document.getElementById("panelCajonDetalle").style.display = '';
+            document.getElementById("panelCajonAcabado").style.display = '';
+        } else {
+            document.getElementById("panelCajonDetalle").style.display = 'none';
+            document.getElementById("panelCajonAcabado").style.display = 'none';
+        }
+    }
+
+    function mostrarOcultarOpcionesCajonPresentacion() {
+        if (validaCajon == true) {
+            document.getElementById("panelMedida").style.display = 'none';
+            document.getElementById("panelColor").style.display = '';
+            document.getElementById("panelTamaño").style.display = '';
+            document.getElementById("cbUnidadMedidaPresentacion").value = 'Unidad';
+        } else {
+            document.getElementById("panelMedida").style.display = '';
+            document.getElementById("panelColor").style.display = 'none';
+            document.getElementById("panelTamaño").style.display = 'none';
+        }
+    }
+
+
+    function ocultarColumnasPresentacion() {
+        if (validaCajon == true) {
+            document.getElementById("colTamaño").style.display = '';
+            document.getElementById("colColor").style.display = '';
+            document.getElementById("colMedida").style.display = 'none';
+        } else {
+            document.getElementById("colTamaño").style.display = 'none';
+            document.getElementById("colColor").style.display = 'none';
+            document.getElementById("colMedida").style.display = '';
+        }
+    }
+
+    function agregarItemPresentacion() {
+
+        var _descripcion = document.getElementById("txtDescripcionPresentacion").value;
+        var _color = document.getElementById("txtColorPresentacion").value;
+        var _unidadMedida = document.getElementById("cbUnidadMedidaPresentacion").value;
+        var _tamaño = document.getElementById("cbTamañoCajon").value;
+        var _precioCompra = document.getElementById("txtPrecioCompra").value;
+        var _precioVenta = document.getElementById("txtPrecioVenta").value;
+        var _stock = document.getElementById("txtStock").value;
+
+        if (_descripcion == "") {
+            Swal.fire({
+                icon: 'error', title: 'Agregar presentación', text: "El Campo Descripción no puede estar vacío."
+            });
+        } else if (_color == "" && validaCajon==true) {
+            Swal.fire({
+                icon: 'error', title: 'Agregar presentación', text: "El Campo Color del Ataúd no puede estar vacío."
+            });
+        } else if (_stock < 0) {
+            Swal.fire({
+                icon: 'error', title: 'Agregar presentación', text: "El Campo Stock no puede ser menor a cero."
+            });
+        } else if (_precioCompra <= 0) {
+            Swal.fire({
+                icon: 'error', title: 'Agregar presentación', text: "El Campo Precio de compra no puede ser menor o igual cero."
+            });
+        } else if (_precioVenta <0) {
+            Swal.fire({
+                icon: 'error', title: 'Agregar presentación', text: "El Campo Precio de Venta no puede ser menor o igual cero."
+            });
+        }
+        else {
+
+            arrayPresentaciones.push(
+                {
+                    'Id': (index + 1),
+                    'Imagen': base64Presentacion,
+                    'Color': _color,
+                    'Tamaño': _tamaño,
+                    'Descripcion': _descripcion,
+                    'Cajon':validaCajon,
+                    'Stock': _stock,
+                    'UnidadMedida': _unidadMedida,
+                    'PrecioCompra': _precioCompra,
+                    'PrecioVenta': _precioVenta
+                }
+            );
+
+            index = index + 1;
+
+            $('#modalAgregarPresentacion').modal('toggle');
+
+            limpiarControlesPresentacion();
+            listarPresentaciones();
+        }
+    }
+
+    function limpiarControlesPresentacion() {
+        document.getElementById("txtDescripcionPresentacion").value = "";
+        document.getElementById("txtColorPresentacion").value = "";
+        document.getElementById("cbTamañoCajon").value = "Pequeño";
+        document.getElementById("txtStock").value = "0";
+        document.getElementById("txtPrecioCompra").value = "0.00";
+        document.getElementById("txtPrecioVenta").value = "0.00";
+    }
+
+
+    function listarPresentaciones() {
+        
+        let filas = "";
+        for (let i = 0; i <= arrayPresentaciones.length - 1; i++) {
+
+            let img = "";
+
+            if (arrayPresentaciones[i].Imagen == "") {
+                img = "../../dist/img/no-image.png";
+            } else {
+                img = arrayPresentaciones[i].Imagen;
+            }
+
+            filas = filas +
+            "<tr>" +
+                "<td>" + (i+1) + "</td>" +
+                "<td class='text-center p-2 align-middle'>" +
+                    "<div class='col-sm-12'>" +
+                        "<img class='img-fluid' src='" + img + "' alt='Photo'> " +
+                    "</div>" +
+                "</td > " + 
+                "<td class='text-left py-0 align-middle'><p>" + arrayPresentaciones[i].Descripcion + "</p></td>" +
+
+                "<td class='text-center py-0 align-middle' id='rowTamaño" + i + "'><p>" + arrayPresentaciones[i].Tamaño + "</p></td>" +
+                "<td class='text-center py-0 align-middle' id='rowColor" + i + "'><p>" + arrayPresentaciones[i].Color + "</p></td> " +
+                "<td class='text-center py-0 align-middle' id='rowMedida" + i + "'><p>" + arrayPresentaciones[i].UnidadMedida + "</p></td> " +
+                "<td class='text-center py-0 align-middle'><p>" + arrayPresentaciones[i].PrecioCompra + "</p></td> " +
+                "<td class='text-center py-0 align-middle'><p>" + arrayPresentaciones[i].PrecioVenta + "</p></td> " +
+                "<td class='text-center py-0 align-middle'><p>" + arrayPresentaciones[i].Stock + "</p></td> " +
+                "<td class='text-right py-0 align-middle'>" +
+                    "<div class='btn-group btn-group-sm'>" +
+                        "<a href='javascript:void(0);' onclick='quitarPresentacionArray(" + arrayPresentaciones[i].Id + ")' class='btn btn-danger'><i class='fas fa-trash'></i></a> " +
+                    "</div>" +
+                "</td>" +
+            "</tr>";
+        }
+
+        document.getElementById("dtPresentaciones").innerHTML = filas;
+
+        for (let i = 0; i <= arrayPresentaciones.length - 1; i++) {
+            if (validaCajon == true) {
+                document.getElementById("rowTamaño" + i).style.display = '';
+                document.getElementById("rowColor" + i).style.display = '';
+                document.getElementById("rowMedida" + i).style.display = 'none';
+            } else {
+                document.getElementById("rowTamaño" + i).style.display = 'none';
+                document.getElementById("rowColor" + i).style.display = 'none';
+                document.getElementById("rowMedida" + i).style.display = '';
+            }
+        }
+        
+    }
+
+    function quitarPresentacionArray(id) {
+
+        arrayPresentaciones = arrayPresentaciones.filter(function (img) {
+            return img.Id != id;
+        });
+
+        listarPresentaciones();
+    }
+
+    function encodeImageFileAsURL(element) {
+        var file = element.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            base64String = reader.result;
+            agregarImagenToArray();
+        }
+        reader.readAsDataURL(file);
+    }
+
+    const $seleccionArchivos = document.querySelector("#seleccionArchivos"),
+        $imagenPrevisualizacion = document.querySelector("#imagenPrevisualizacion");
+
+    $seleccionArchivos.addEventListener("change", () => {
+        // Los archivos seleccionados, pueden ser muchos o uno
+        const archivos = $seleccionArchivos.files;
+        // Si no hay archivos salimos de la función y quitamos la imagen
+        if (!archivos || !archivos.length) {
+            $imagenPrevisualizacion.src = "../../dist/img/no-image.png";
+            return;
+        }
+        // Ahora tomamos el primer archivo, el cual vamos a previsualizar
+        const primerArchivo = archivos[0];
+        // Lo convertimos a un objeto de tipo objectURL
+        const objectURL = URL.createObjectURL(primerArchivo);
+        // Y a la fuente de la imagen le ponemos el objectURL
+        $imagenPrevisualizacion.src = objectURL;
+    });
+
+    function encodeImageFileAsURLPresentacion(element) {
+        var file = element.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            base64Presentacion = reader.result;
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function listarImagenes() {
+        let filas = "";
+        for (let i = 0; i <= arrayImagenes.length - 1; i++) {
+
+            filas = filas +
+                "<div class='col-4 col-sm-4 col-md-3 mb-2'>" +
+                "<img class='img-fluid' src='" + arrayImagenes[i].imagen + "' alt='Photo'>" +
+                "<button type='button' onclick='quitarImagenByArray(" + arrayImagenes[i].id + ")'  " +
+                "class='btn btn-block bg-gradient-danger btn-xs' >Quitar</button ></div> "
+        }
+
+        document.getElementById("contenedorImagenes").innerHTML = filas;
+    }
+
+    function agregarImagenToArray() {
+
+        arrayImagenes.push({ id: (index + 1), imagen: base64String });
+        index = index + 1;
+
+        listarImagenes();
+    }
+
+    function quitarImagenByArray(id) {
+
+        arrayImagenes = arrayImagenes.filter(function (img) {
+            return img.id != id;
+        });
+
+        listarImagenes();
+    }
+
+    function insertarRegistros() {
+
+        var _codigo = document.getElementById("txtCodigo").value
+        var _descripcion = document.getElementById("txtDescripcion").value
+        var _cajonDetalle = document.getElementById("txtCajonDetalle").value
+        var _cajonAcabado = document.getElementById("txtCajonAcabado").value
+
+        if (idCategoria == "") {
+            Swal.fire({
+                icon: 'error', title: 'Registra Producto', text: "Debe seleccionar una categoría, intente nuevamente"
+            });
+        }
+        else if (_codigo == "") {
+            Swal.fire({
+                icon: 'error', title: 'Registra Producto', text: "El Campo Código de producto no puede estar vacío, intente nuevamente."
+            });
+        }
+        else if (_descripcion == "") {
+            Swal.fire({
+                icon: 'error', title: 'Registra Producto', text: "El campo descripcion es importante para el producto, agregue una descripcion del producto!!!!"
+            });
+        }
+        else {
+
+            var item =
+            {
+                "IdCategoria": idCategoria,
+                "Codigo": _codigo,
+                "RangoNivel": index,
+                "Cajon": validaCajon,
+                "Descripcion": _descripcion,
+                "CajonDetalle": _cajonDetalle,
+                "CajonAcabado": _cajonAcabado
+            }
+
+            var parametros = {
+                "item": item,
+                "imagenes": arrayImagenes,
+                "presentaciones": arrayPresentaciones
+            };
+
+            var _url = "insertarProductoDetallesImagenes";
+
+            $.ajax({
+                url: _url,
+                type: "POST",
+                data: parametros,
+                success: function (data) {
+                    if (data.estado == true) {
+
+                        document.getElementById("txtCodigo").value = "";
+                        document.getElementById("txtDescripcion").value = "";
+                        document.getElementById("txtCajonDetalle").value = ""
+                        document.getElementById("txtCajonAcabado").value = "";
+
+                        arrayImagenes = [];
+                        arrayPresentaciones = [];
+
+                        listarPresentaciones();
+                        listarImagenes();
+
+                        mostrarDetalleAcabadoCajon();
+
+                        mostrarOcultarOpcionesCajonPresentacion();
+
+                        ocultarColumnasPresentacion();
+
+                        Swal.fire({
+                            icon: 'success', title: 'Registro de Nuevo Producto', text: "Se agrego con exito el nuevo registro " + item.Descripcion
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error', title: 'Registro de Nuevo Producto', text: "El producto " + item.Descripcion + " no se agrego, posible error: " + data.mensaje
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+}

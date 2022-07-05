@@ -1,0 +1,155 @@
+﻿
+@{
+    ViewData["Title"] = "Listado";
+    Layout = "~/Views/Admin/Index.cshtml";
+
+    var Productos = (List<appFunerariaRojas.Models.ProductoCategoriaResultado>)ViewBag.Productos;
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-1">
+            <div class="col-sm-12">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Inline Charts</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="card">
+
+                    <!-- /.card-header -->
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <div class="col-12 col-md-6">
+                                <h3>Lista de productos</h3>
+                            </div>
+
+                            <div class="col-12 col-md-6 text-right">
+                                <button class="btn btn-primary" onclick="window.location.href='@Url.Action("Agregar", "Producto")'">Agregar Nuevo Producto</button>
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th class="text-center" style="width:150px">Img</th>
+                                        <th class="text-center" style="width: 100px">Código</th>
+                                        <th class="text-center" style="width:150px">Categoria</th>
+                                        <th class="text-center">Descripción</th>
+                                        <th class="text-center" style='width:50px;'>Cajón</th>
+                                        <th style='width:50px;'></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="dtCategoria">
+                                    @for(int i = 0; i<= Productos.Count -1; i++){
+                                    <tr>
+                                        <td class='text-right py-0 align-middle'>@(i+1)</td>
+                                        @if (Productos[i].imagenes.Count == 0)
+                                        {
+                                            <td class='text-center p-2 align-middle'>
+                                                4444
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class='text-center p-2 align-middle'>
+                                                <div class='col-sm-12'>
+                                                    <img class='img-fluid' src="@Productos[i].imagenes[0].Imagen" alt='Photo'>
+                                                </div>
+                                            </td>
+                                        }
+                                        <td>@Productos[i].item.Codigo</td>
+                                        <td>@Productos[i].categoria.Nombre</td>
+                                        <td>@Productos[i].item.Descripcion</td>
+                                        @if (Productos[i].item.Cajon == true)
+                                        {
+                                            <td class='project-state text-center text-right py-0 align-middle'><span class='badge badge-success'>SÍ</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class='project-state text-center text-right py-0 align-middle'><span class='badge badge-danger'>NO</span></td>
+                                        }
+
+                                        <td class='text-right py-0 align-middle'>
+                                            <div class='btn-group btn-group-sm'>
+                                                <a href='javascript:void(0);' class='btn btn-info'><i class='fas fa-pencil-alt'></i></a>
+                                                <a href='javascript:void(0);' onclick="eliminarProducto(@Productos[i].item.Id)" class='btn btn-danger'><i class='fas fa-trash'></i></a> 
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+
+    function eliminarProducto(_id) {
+        var parametros = {
+            "id": _id
+        };
+
+        var _url = "actualizarEstadoByIdProducto";
+
+        Swal
+            .fire({
+                title: "Eliminar Producto",
+                text: "¿Esta seguro de eliminar el producto seleccionado ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+            })
+            .then(resultado => {
+                if (resultado.value == true) {
+                    $.ajax({
+                        url: _url,
+                        type: "POST",
+                        data: parametros,
+                        success: function (data) {
+                            if (data.estado == true) {
+                                window.location.href = '@Url.Action("Index", "Producto")';
+
+                                Swal.fire({
+                                    icon: 'success', title: "Eliminar Producto", text: "Producto se elimino correctamente. . . "
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error', title: "Eliminar Producto", text: "No se elimino el producto seleccionado, error: " + data.mensaje
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+    }
+
+</script>

@@ -1,0 +1,258 @@
+﻿
+@{
+    ViewData["Title"] = "Proveedor";
+    Layout = "~/Views/Admin/Index.cshtml";
+
+    var proveedores = (List<appFunerariaRojas.Models.Entity.Proveedor>)ViewBag.Proveedores;
+}
+
+<div class="modal fade" id="modalAgregarProveedor">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">NUEVO PROVEEDOR</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="row">
+
+                            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-3">
+                                <label for="exampleInputEmail1">NIT o CI:</label>
+                                <input type="number" class="form-control" id="txtNit" placeholder="Introduzca Nit/Ci">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-6">
+                                <label for="exampleInputEmail1">Razón Social:</label>
+                                <input type="text" class="form-control" id="txtRazonSocial" placeholder="Introduzca Razon Social">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-3">
+                                <label for="exampleInputEmail1">Teléfono:</label>
+                                <input type="number" class="form-control" id="txtTelefono" placeholder="Introduzca Telefono">
+                            </div>
+
+                            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-3">
+                                <label for="exampleInputEmail1">Ciudad:</label>
+                                <select class="form-control" id="cbCiudad">
+                                    <option value="La paz">La paz</option>
+                                    <option value="El Alto">El Alto</option>
+                                    <option value="Santa Cruz">Santa Cruz</option>
+                                    <option value="Cochabamba">Cochabamba</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-12 col-sm-12 col-md-12 col-lg-9">
+                                <label for="exampleInputEmail1">Descripción:</label>
+                                <input type="text" class="form-control" id="txtDireccion" placeholder="Introduzca dirección">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="agregarProveedor()">Guardar Registro</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-1">
+            <div class="col-sm-12">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Inline Charts</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="card">
+
+                    <!-- /.card-header -->
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <div class="col-12 col-md-6">
+                                <h3>Lista de Proveedores</h3>
+                            </div>
+
+                            <div class="col-12 col-md-6 text-right">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarProveedor">Agregar Nuevo Proveedor</button>
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th class="text-center" style="width: 80px">NIT/CI</th>
+                                        <th class="text-center">Ciudad</th>
+                                        <th class="text-center">Razón Social</th>
+                                        <th class="text-center" style='width:80px;'>Teléfono</th>
+                                        <th class="text-center">Dirección</th>
+                                        <th style='width:50px;'></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @for (int i = 0; i <= proveedores.Count - 1; i++)
+                                    {
+                                        <tr>
+                                            <td>@(i + 1)</td>
+                                            <td>@proveedores[i].Nit</td>
+                                            <td>@proveedores[i].Ciudad</td>
+                                            <td>@proveedores[i].RazonSocial</td>
+                                            <td>@proveedores[i].Telefono</td>
+                                            <td>@proveedores[i].Direccion</td>
+                                            <td class='text-right py-0 align-middle'>
+                                                <div class='btn-group btn-group-sm'>
+                                                    <a href='javascript:void(0);' onclick='' class='btn btn-info'><i class='fas fa-pencil-alt'></i></a>
+                                                    <a href='javascript:void(0);' onclick='eliminarProveedor(@proveedores[i].Id)' class='btn btn-danger'><i class='fas fa-trash'></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+@section scripts{
+    <script>
+    function agregarProveedor() {
+
+        var _nit = document.getElementById("txtNit").value;
+        var _razonSocial = document.getElementById("txtRazonSocial").value;
+        var _telefono = document.getElementById("txtTelefono").value;
+        var _ciudad = document.getElementById("cbCiudad").value;
+        var _direccion = document.getElementById("txtDireccion").value;
+
+        if (_nit == "") {
+            Swal.fire({
+                icon: 'error', title: 'Nuevo Proveedor', text: "El Campo NIT no puede estar vacío."
+            });
+        }
+        else if (_razonSocial == "") {
+            Swal.fire({
+                icon: 'error', title: 'Nuevo Proveedor', text: "El campo Razon social no puede estar vacío, intente nuevamente."
+            });
+        }
+        else if (_telefono == "") {
+            Swal.fire({
+                icon: 'error', title: 'Nuevo Proveedor', text: "El campo Teléfono no puede estar vacío, intente nuevamente."
+            });
+        }
+        else if (_direccion == "") {
+            Swal.fire({
+                icon: 'error', title: 'Nuevo Proveedor', text: "El campo Direccion no puede estar vacío, intente nuevamente."
+            });
+        }
+        else {
+
+            var parametros = {
+                "Nit": _nit,
+                "Ciudad": _ciudad,
+                "RazonSocial": _razonSocial,
+                "Telefono": _telefono,
+                "Direccion": _direccion
+            };
+
+            var _url = "insertarProveedor";
+
+            $.ajax({
+                url: _url,
+                type: "POST",
+                data: parametros,
+                success: function (data) {
+                    if (data.estado == true) {
+
+                        window.location.href = '@Url.Action("Proveedor","Inventario")';
+
+                        Swal.fire({
+                            icon: 'success', title: 'Nuevo Proveedor', text: "Se agrego con exito la categoria " + _nombre
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error', title: 'Nuevo Proveedor', text: "Error: " + data.mensaje
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    function eliminarProveedor(_id) {
+        var parametros = {
+            "id": _id
+        };
+
+        var _url = "actualizarEstadoByIdProveedor";
+
+        Swal
+            .fire({
+                title: "Eliminar Categoía",
+                text: "¿Esta seguro de eliminar la proveedor seleccionado?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+            })
+            .then(resultado => {
+                if (resultado.value == true) {
+                    $.ajax({
+                        url: _url,
+                        type: "POST",
+                        data: parametros,
+                        success: function (data) {
+                            if (data.estado == true) {
+                                window.location.href = '@Url.Action("Proveedor","Inventario")';
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error', title: "Eliminar Proveedor", text: "error: " + data.mensaje
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+    }
+    </script>
+}
