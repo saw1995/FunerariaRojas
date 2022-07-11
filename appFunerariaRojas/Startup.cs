@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Wkhtmltopdf.NetCore;
 
 namespace appFunerariaRojas
 {
@@ -31,6 +32,8 @@ namespace appFunerariaRojas
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
             });
             #endregion
+
+            services.AddWkhtmltopdf("wkhtmltopdf");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

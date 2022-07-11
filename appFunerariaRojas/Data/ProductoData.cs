@@ -79,7 +79,7 @@ namespace appFunerariaRojas.Data
                                 {
                                     cmd3.Parameters["@id"].Value = presentacion.Id;
                                     cmd3.Parameters["@id_item"].Value = _item.Id;
-                                    cmd3.Parameters["@descripcion"].Value = presentacion.Descripion;
+                                    cmd3.Parameters["@descripcion"].Value = presentacion.Descripcion;
                                     cmd3.Parameters["@cajon"].Value = presentacion.Cajon;
                                     cmd3.Parameters["@color"].Value = presentacion.Color;
                                     cmd3.Parameters["@unidad_medida"].Value = presentacion.UnidadMedida;
@@ -237,6 +237,68 @@ namespace appFunerariaRojas.Data
             }
         }
 
+        public async Task<List<ItemDatos>> listaProductosByCategoria(bool estado, string id_categoria)
+        {
+            var resultado = new List<ItemDatos>();
+
+            using(var con = new MySqlConnection(new Conexion().cn()))
+            {
+                await con.OpenAsync();
+
+                string sql = "SELECT item.id, item.id_categoria, item.codigo, item.rango_nivel, item.cajon, "
+                    + "item.descripcion, item.cajon_detalle, item.cajon_acabado, item.estado, "
+                    + "item_presentacion.descripcion as 'descripcion_presentacion', item_presentacion.color, "
+                    + "item_presentacion.unidad_medida, item_presentacion.tamaño, item_presentacion.precio_compra, "
+                    + "item_presentacion.precio_venta, item_presentacion.stock, item_presentacion.id as 'id_presentacion' "
+                    + "FROM item INNER JOIN item_presentacion ON item.id = item_presentacion.id_item "
+                    + "WHERE item_presentacion.estado=@estado AND item.id_categoria=@id_categoria ORDER BY item.descripcion DESC ";
+
+                using (var cmd = new MySqlCommand(sql, con))
+                {
+                    cmd.Parameters.AddWithValue("@estado", estado);
+                    cmd.Parameters.AddWithValue("@id_categoria", id_categoria);
+
+                    using(var drd = await cmd.ExecuteReaderAsync())
+                    {
+                        while(await drd.ReadAsync())
+                        {
+                            var producto = new ItemDatos();
+
+                            var oItem = new Item
+                            {
+                                Id = Convert.ToString(drd["id"]),
+                                IdCategoria = Convert.ToString(drd["id_categoria"]),
+                                Codigo = Convert.ToString(drd["codigo"]),
+                                Cajon = Convert.ToBoolean(drd["cajon"]),
+                                Descripcion = Convert.ToString(drd["descripcion"]),
+                                CajonDetalle = Convert.ToString(drd["cajon_detalle"]),
+                                CajonAcabado = Convert.ToString(drd["cajon_acabado"])
+                            };
+
+                            producto.item = oItem;
+
+                            var oPresentacion = new ItemPresentacion
+                            {
+                                Id = Convert.ToString(drd["id_presentacion"]),
+                                Descripcion = Convert.ToString(drd["descripcion_presentacion"]),
+                                Color = Convert.ToString(drd["color"]),
+                                UnidadMedida = Convert.ToString(drd["unidad_medida"]),
+                                Tamaño = Convert.ToString(drd["tamaño"]),
+                                PrecioCompra = Convert.ToDecimal(drd["precio_compra"]),
+                                PrecioVenta = Convert.ToDecimal(drd["precio_venta"]),
+                                Stock = Convert.ToInt32(drd["stock"])
+                            };
+
+                            producto.presentacion = oPresentacion;
+
+                            resultado.Add(producto);
+                        }
+                    }
+                }
+            }
+
+            return resultado;
+        }
 
     }
 }

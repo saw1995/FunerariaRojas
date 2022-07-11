@@ -7,7 +7,7 @@ namespace appFunerariaRojas.Models.Entity
     {
         public string Id { get; set; }
         public string IdItem { get; set; }
-        public string Descripion { get; set; }
+        public string Descripcion { get; set; }
         public bool? Cajon { get; set; }
         public string Color { get; set; }
         public string UnidadMedida { get; set; }

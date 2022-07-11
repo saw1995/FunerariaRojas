@@ -243,7 +243,7 @@ namespace appFunerariaRojas.Models.Entity
                     .HasColumnName("color")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Descripion)
+                entity.Property(e => e.Descripcion)
                     .HasColumnName("descripion")
                     .HasMaxLength(150);
 

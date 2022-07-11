@@ -1,0 +1,470 @@
+﻿
+@{
+    ViewData["Title"] = "agregarCompra";
+    Layout = "~/Views/Admin/Index.cshtml";
+
+    var Categorias = (List<appFunerariaRojas.Models.Entity.Categoria>)ViewBag.Categorias;
+
+    var NumeroCompra = (int)ViewBag.NumeroCompra;
+}
+
+<div class="modal fade" id="modalProveedores">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">SELECCIONAR PROVEEDOR</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-12">
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Buscar...">
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 15px">#</th>
+                                        <th class="text-center" style="width: 100px">NIT/CI</th>
+                                        <th class="text-center">Razón Social</th>
+                                        <th style="width: 60px"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="dtProveedores">
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modalProductos">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header primary">
+                <h4 class="modal-title">SELECCIONAR PRODUCTO </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group col-12 col-md-6">
+                            <label for="exampleInputEmail1">Categoría:</label>
+                            <select class="form-control" id="cbCategoria" onchange="listarProductos()">
+                                @for (int i = 0; i <= Categorias.Count - 1; i++)
+                                {
+                                    <option value="@Categorias[i].Id">@Categorias[i].Nombre</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 100px">Código</th>
+                                        <th class="text-center">Descripcion</th>
+                                        <th class="text-center" style="width: 80px">U.Medida</th>
+                                        <th class="text-center" style="width: 60px">P.Compra</th>
+                                        <th style="width: 60px"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="dtProductos">
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Agregar Nueva Compra</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Inline Charts</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-12 ">
+
+                <div class="card card-secondary">
+
+                    <div class="card-header">
+                        <h3 class="card-title">Nº Compra - <b>@NumeroCompra</b></h3>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="form-group col-12">
+                                <label for="exampleInputEmail1">Proveedor:</label>
+                                <input type="text" class="form-control" id="txtProveedor" readonly
+                                       placeholder="Click Seleccionar Proveedor" data-toggle="modal" data-target="#modalProveedores">
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label for="exampleInputEmail1">Concepto de Compra:</label>
+                                <input type="text" class="form-control" id="txtConcepto" placeholder="Introduzca el concepto">
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label for="exampleInputEmail1">Producto:</label>
+                                <input type="text" class="form-control" id="txtProducto" readonly
+                                       placeholder="Click Seleccionar Producto" data-toggle="modal" data-target="#modalProductos">
+                            </div>
+
+                            <div class="col-12 col-sx-9 col-md-6">
+                                <div class="row">
+                                    <div class="form-group col-4 text-center">
+                                        <label for="exampleInputEmail1">Precio:</label>
+                                        <input type="number" class="form-control" id="txtPrecio" value="0.00">
+                                    </div>
+                                    <div class="form-group col-4 text-center">
+                                        <label for="exampleInputEmail1">Cantidad:</label>
+                                        <input type="number" class="form-control" id="txtCantidad" value="1">
+                                    </div>
+                                    <div class="form-group col-4 text-center">
+                                        <label for="exampleInputEmail1">.</label>
+                                        <input type="submit" class="btn btn-success form-control" value="Agregar" onclick="agregarDetalleLista()" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label for="exampleInputEmail1">Detalle de compra:</label>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 10px">#</th>
+                                                <th class="text-center" style="width:100px">Código</th>
+                                                <th class="text-left">Descripción</th>
+                                                <th class="text-center" style="width:50px" id="colMedida">U/Medida</th>
+                                                <th class="text-center" style="width:50px">Precio</th>
+                                                <th class="text-center" style="width:45px">Cantidad</th>
+                                                <th class="text-center" style="width:50px">Subtotal</th>
+                                                <th class="text-center" style="width:10px"></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="dtDetalleCompra">
+                                            @*//llenamos los campos con javascripts*@
+                                        </tbody>
+
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6"><b>Suma Totales:</b></td>
+                                                <td class="text-right"><b id="lblTotal"></b></td>
+                                            </tr>
+                                        </tfoot>
+
+                                    </table>
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12 text-right p-2 mb-3">
+                                <button class="btn btn-success btn-flat" onclick="registrarCompraDetalle()">Guardar Nuevo Registro</button>
+                                <button class="btn btn-danger btn-flat" onclick="window.location='@Url.Action( "Compras", "Inventario")'">Cancelar</button>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section scripts{
+    <script>
+
+        var oProveedor = null;
+        var oProducto = null;
+
+        var compraDetalle = [];
+
+        $(document).ready(function () {
+            listarProveedores();
+        });
+
+        function listarProveedores() {
+            var parametros = {
+                    "Estado": 1
+                };
+
+            var _url = "listaProveedorByEstado";
+
+            $.ajax({
+                url: _url,
+                type: "POST",
+                data: parametros,
+                success: function (data) {
+                    let filas = "";
+                    for (let i = 0; i <= data.length - 1; i++) {
+
+                        filas = filas +
+                        "<tr>" +
+                        "<td>" + (i + 1).toString() + "</td>" +
+                        "<td>" + data[i]["nit"] + "</td>" +
+                        "<td>" + data[i]["razonSocial"] + "</td>" +
+                        "<td><div class='btn-group btn-group-sm text-center' >" +
+
+                            "<button class='btn btn-success btn-sm' onclick='seleccionarProveedor(" + JSON.stringify(data[i]) + ")'>Seleccionar</button>" +
+
+                        "</div></td>" +
+                        "</tr>"
+                    }
+                    document.getElementById("dtProveedores").innerHTML = filas;
+                }
+            });
+        }
+
+        function seleccionarProveedor(_proveedor) {
+            oProveedor = _proveedor;
+            document.getElementById("txtProveedor").value = oProveedor.nit + " - " + oProveedor.razonSocial;
+            $('#modalProveedores').modal('toggle');
+        }
+
+        function listarProductos() {
+            var idCategoria = document.getElementById("cbCategoria").value;
+
+            var parametros = {
+                "id_categoria": idCategoria
+            };
+
+            var _url = "listaProductosByCategoria";
+
+            $.ajax({
+                url: _url,
+                type: "POST",
+                data: parametros,
+                success: function (data) {
+                    console.log(data)
+                    let filas = "";
+                    for (let i = 0; i <= data.length - 1; i++) {
+
+                        let cajaDesc = "<b>Detalle:</b>" + data[i].item.descripcion;
+                        if (data[i].item.cajon == true) {
+                            cajaDesc = "<b>Cajon:</b>" + data[i].item.descripcion + " " +
+                                data[i].item.cajonAcabado + " " + data[i].item.cajonDetalle +
+                                " Color " + data[i].presentacion.color + " Tamaño " + data[i].presentacion.tamaño;
+                        }
+
+                        filas = filas +
+                            "<tr>" +
+                            "<td>" + data[i].item.codigo + "</td>" +
+                            "<td>" + cajaDesc + "</td>" +
+                            "<td class='text-center'>" + data[i].presentacion.unidadMedida + "</td>" +
+                            "<td class='text-right'>" + Number.parseFloat(data[i].presentacion.precioCompra).toFixed(2) + "</td>" +
+                            "<td><div class='btn-group btn-group-sm text-center' >" +
+
+                            "<button class='btn btn-success btn-sm' onclick='seleecionarProducto(" + JSON.stringify(data[i]) + ")'>Seleccionar</button>" +
+
+                            "</div></td>" +
+                            "</tr>"
+                    }
+                    document.getElementById("dtProductos").innerHTML = filas;
+                }
+            });
+        }
+
+        function seleecionarProducto(_producto) {
+            oPresentacion = _producto;
+
+            let cajaDesc = oPresentacion.item.codigo + ", " + oPresentacion.item.descripcion;
+
+            if (oPresentacion.item.cajon == true) {
+                cajaDesc = oPresentacion.item.codigo + ", " + oPresentacion.item.descripcion + " " +
+                    oPresentacion.item.cajonAcabado + " " + oPresentacion.item.cajonDetalle +
+                    " Color " + oPresentacion.presentacion.color + " Tamaño " + oPresentacion.presentacion.tamaño;
+            }
+
+            document.getElementById("txtProducto").value = cajaDesc;
+            document.getElementById("txtPrecio").value = Number.parseFloat(oPresentacion.presentacion.precioCompra).toFixed(2);
+            document.getElementById("txtCantidad").value = "1";
+
+            $('#modalProductos').modal('toggle');
+        }
+
+        function agregarDetalleLista() {
+
+            var producto = document.getElementById("txtProducto").value;
+            var precio = document.getElementById("txtPrecio").value;
+            var cantidad = document.getElementById("txtCantidad").value;
+
+            if (producto != "") {
+                if (precio > 0 && cantidad > 0) {
+                    compraDetalle.push({
+                        "IdItemPresentacion": oPresentacion.presentacion.id,
+                        "Precio": precio,
+                        "Cantidad": cantidad,
+                        "codigo": oPresentacion.item.codigo,
+                        "Medida": oPresentacion.presentacion.unidadMedida,
+                        "Subtotal": Number.parseFloat(precio * cantidad).toFixed(2),
+                        "item": oPresentacion.item,
+                        "presentacion": oPresentacion.presentacion
+                    });
+
+                    listarDetalleCompra();
+                }
+            }
+
+            document.getElementById("txtProducto").value = "";
+            document.getElementById("txtPrecio").value = "0.00";
+            document.getElementById("txtCantidad").value = "1";
+        }
+
+        function listarDetalleCompra() {
+            let filas = "";
+            for (let i = 0; i <= compraDetalle.length - 1; i++) {
+
+                let cajaDesc = "<b>Detalle:</b>" + compraDetalle[i].item.descripcion;
+                if (compraDetalle[i].item.cajon == true) {
+                    cajaDesc = "<b>Cajon:</b>" + compraDetalle[i].item.descripcion + " " +
+                        compraDetalle[i].item.cajonAcabado + " " + compraDetalle[i].item.cajonDetalle +
+                        " Color " + compraDetalle[i].presentacion.color + " Tamaño " + compraDetalle[i].presentacion.tamaño;
+                }
+
+                filas = filas +
+                    "<tr>" +
+                    "<td>" + (i+1) + "</td>" +
+                    "<td>" + compraDetalle[i].item.codigo + "</td>" +
+                    "<td>" + cajaDesc + "</td>" +
+                    "<td class='text-center'>" + compraDetalle[i].presentacion.unidadMedida + "</td>" +
+                    "<td class='text-right'>" + Number.parseFloat(compraDetalle[i].Precio).toFixed(2) + "</td>" +
+                    "<td class='text-center'>" + compraDetalle[i].Cantidad + "</td>" +
+                    "<td class='text-right'>" + Number.parseFloat(compraDetalle[i].Subtotal).toFixed(2) + "</td>" +
+                    "<td class='text-right py-0 align-middle'>" +
+                    "<div class='btn-group btn-group-sm' >" +
+
+                        "<a href='javascript:void(0);' onclick='eliminarCategoria(" + compraDetalle[i].IdItemPresentacion + ")' " +
+                        "class='btn btn-danger' > <i class='fas fa-trash'></i></a > "
+
+                    "</div></td>" +
+
+                    "</tr>"
+            }
+            document.getElementById("dtDetalleCompra").innerHTML = filas;
+
+            sumasDetalle();
+        }
+
+        function eliminarCategoria(id_presentacion) {
+            compraDetalle = compraDetalle.filter(function (detalle) {
+                return detalle.IdItemPresentacion != id_presentacion;
+            });
+
+            listarDetalleCompra();
+        }
+
+        function sumasDetalle() {
+            var total = 0;
+
+            for (let i = 0; i <= compraDetalle.length - 1; i++) {
+                total = total + Number.parseFloat(compraDetalle[i].Subtotal);
+            }
+
+            let result = Number.parseFloat(total).toFixed(2)
+            document.getElementById("lblTotal").innerHTML = result;
+        }
+
+        function registrarCompraDetalle() {
+            if (oProveedor == null) {
+                Swal.fire({
+                    icon: 'error', title: 'Registra nueva Compra', text: "Debe seleccionar un proveedor para el registro de nueva compra, intente nuevamente."
+                });
+            } else if (document.getElementById("txtConcepto").value == "") {
+                Swal.fire({
+                    icon: 'error', title: 'Registra nueva Compra', text: "Debe Agregar un concepto o glosa, comprobante o factura, intente nuevamente"
+                });
+            } else if (compraDetalle.length == 0) {
+                Swal.fire({
+                    icon: 'error', title: 'Registra nueva Compra', text: "Debe agregar productos a la lista de detalle compra este no puede estar vacio, intente nuevamente"
+                });
+            } else {
+                var parametros = {
+                    "compra": {
+                        "Numero": '@NumeroCompra',
+                        "IdProveedor": oProveedor.id,
+                        "Cocepto": document.getElementById("txtConcepto").value
+                    },
+                    "detalle": compraDetalle
+                };
+
+                var _url = "insertarcompraDetalle";
+
+                $.ajax({
+                    url: _url,
+                    type: "POST",
+                    data: parametros,
+                    success: function (data) {
+                        if (data.estado == true) {
+                            window.location.href = '@Url.Action("Compras", "Inventario")';
+                        } else {
+                            Swal.fire({
+                                icon: 'error', title: "Error Sistema", text: "Error detalle: " + data.mensaje
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}

@@ -23,6 +23,21 @@ namespace appFunerariaRojas.Controllers
 
             return View();
         }
+
+        public async Task<IActionResult> agregarCompra()
+        {
+            ViewBag.btnMenu = 4;
+            ViewBag.btnSubMenu = "E";
+
+            ViewBag.NumeroCompra = await new ComprasData().numeroCompraGenerado();
+
+            ViewBag.usuarioData = new UsuarioRolDesarialize()
+                .usuarioRolModeloSession(Convert.ToString(HttpContext.Session.GetString("usuario")));
+
+            ViewBag.Categorias = await new CategoriaData().listaCategoriasByEstado(true);
+
+            return View();
+        }
         public async Task<IActionResult> Proveedor()
         {
             ViewBag.btnMenu = 4;
@@ -57,6 +72,12 @@ namespace appFunerariaRojas.Controllers
         }
 
         [HttpPost]
+        public async Task<List<Proveedor>> listaProveedorByEstado()
+        {
+            return await new ProveedorData().listaProveedorByEstado(true);
+        }
+
+        [HttpPost]
         public async Task<ResultadoModel> insertarProveedor(Proveedor proveedor)
         {
             var resultado = new ResultadoModel();
@@ -80,6 +101,39 @@ namespace appFunerariaRojas.Controllers
         {
             return await new ComprasData().listaComprasByFecha(fecha_inicio, fecha_final);
         }
+
+        [HttpPost]
+        public async Task<List<ItemDatos>> listaProductosByCategoria(string id_categoria)
+        {
+            return await new ProductoData().listaProductosByCategoria(true, id_categoria);
+        }
+
+        [HttpPost]
+        public async Task<ResultadoModel> insertarcompraDetalle(CompraDetalleParameter param)
+        {
+            var result = new ResultadoModel();
+
+            var oUsuario = new UsuarioRolDesarialize()
+                .usuarioRolModeloSession(Convert.ToString(HttpContext.Session.GetString("usuario")));
+
+            DateTime fecha = DateTime.Now;
+
+            param.compra.Id = new Util.FuncionesAux().generarId();
+            param.compra.IdUsuario = oUsuario.usuario.Id;
+            param.compra.Estado = true;
+            param.compra.Fecha = fecha;
+            param.compra.Hora = fecha.TimeOfDay;
+
+            foreach(var obj in param.detalle)
+            {
+                obj.Estado = true;
+            }
+
+            result = await new ComprasData().insertarDetalleCompras(param.compra, param.detalle);
+
+            return result;
+        }
+
 
     }
 }

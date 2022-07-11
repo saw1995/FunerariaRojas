@@ -10,6 +10,109 @@ namespace appFunerariaRojas.Data
 {
     public class ComprasData
     {
+        public async Task<ResultadoModel> insertarDetalleCompras(Compra compra, List<CompraDetalle> detallesCompra)
+        {
+            var resultado = new ResultadoModel();
+            resultado.estado = false;
+            resultado.mensaje = "no respuesta";
+
+            try
+            {
+                using (var con = new MySqlConnection(new Conexion().cn()))
+                {
+                    await con.OpenAsync();
+
+                    string sql = "INSERT INTO compra(id, numero, id_proveedor, id_usuario, fecha, hora, cocepto, estado) "
+                        + "VALUES(@id, @numero, @id_proveedor, @id_usuario, @fecha, @hora, @cocepto, @estado)";
+
+                    using (var cmdCompra = new MySqlCommand(sql, con))
+                    {
+                        cmdCompra.Parameters.AddWithValue("@id", compra.Id);
+                        cmdCompra.Parameters.AddWithValue("@numero", compra.Numero);
+                        cmdCompra.Parameters.AddWithValue("@id_proveedor", compra.IdProveedor);
+                        cmdCompra.Parameters.AddWithValue("@id_usuario", compra.IdUsuario);
+                        cmdCompra.Parameters.AddWithValue("@fecha", compra.Fecha);
+                        cmdCompra.Parameters.AddWithValue("@hora", compra.Hora);
+                        cmdCompra.Parameters.AddWithValue("@cocepto", compra.Cocepto);
+                        cmdCompra.Parameters.AddWithValue("@estado", compra.Estado);
+                        await cmdCompra.ExecuteNonQueryAsync();
+
+                        sql = "INSERT INTO compra_detalle(id_compra, id_item_presentacion, precio, cantidad, estado) "
+                            + "VALUES(@id_compra, @id_item_presentacion, @precio, @cantidad, @estado) ";
+
+                        using (var cmdDetalle = new MySqlCommand(sql, con))
+                        {
+                            cmdDetalle.Parameters.Add("@id_compra", MySqlDbType.VarChar, 50);
+                            cmdDetalle.Parameters.Add("@id_item_presentacion", MySqlDbType.VarChar, 50);
+                            cmdDetalle.Parameters.Add("@precio", MySqlDbType.Decimal);
+                            cmdDetalle.Parameters.Add("@cantidad", MySqlDbType.Int32);
+                            cmdDetalle.Parameters.Add("@estado", MySqlDbType.Bit);
+
+                            foreach (var detalle in detallesCompra)
+                            {
+                                cmdDetalle.Parameters["@id_compra"].Value = compra.Id;
+                                cmdDetalle.Parameters["@id_item_presentacion"].Value = detalle.IdItemPresentacion;
+                                cmdDetalle.Parameters["@precio"].Value = detalle.Precio;
+                                cmdDetalle.Parameters["@cantidad"].Value = detalle.Cantidad;
+                                cmdDetalle.Parameters["@estado"].Value = detalle.Estado;
+                                await cmdDetalle.ExecuteNonQueryAsync();
+
+                                string query = "SELECT stock FROM item_presentacion WHERE id=@id";
+
+                                int stock = 0;
+
+                                using (var cmdBusqueda = new MySqlCommand(query, con))
+                                {
+                                    cmdBusqueda.Parameters.AddWithValue("@id", detalle.IdItemPresentacion);
+
+                                    var obj = await cmdBusqueda.ExecuteScalarAsync();
+
+                                    stock = Convert.ToString(obj) == "" ? 0 : Convert.ToInt32(obj);
+                                }
+
+                                query = "UPDATE item_presentacion SET stock=@stock WHERE id=@id ";
+
+                                using (var cmdActualizar = new MySqlCommand(query, con))
+                                {
+                                    cmdActualizar.Parameters.AddWithValue("@stock", (stock + detalle.Cantidad));
+                                    cmdActualizar.Parameters.AddWithValue("@id", detalle.IdItemPresentacion);
+
+                                    await cmdActualizar.ExecuteNonQueryAsync();
+                                }
+                            }
+                        }
+                    }
+
+                    resultado.estado = true;
+                    resultado.mensaje = "Aqui se completo las tareas, like :D";
+                    return resultado;
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado.estado = false;
+                resultado.mensaje = ex.Message.ToString();
+                return resultado;
+            }
+        }
+
+        public async Task<int> numeroCompraGenerado()
+        {
+            using(var con = new MySqlConnection(new Conexion().cn()))
+            {
+                await con.OpenAsync();
+
+                string sql = "SELECT MAX(numero) FROM compra";
+
+                using(var cmd = new MySqlCommand(sql, con))
+                {
+                    var obj = await cmd.ExecuteScalarAsync();
+
+                    return Convert.ToString(obj) == "" ? 10001 : Convert.ToInt32(obj) + 1;
+                }
+            }
+        }
+
         public async Task<List<CompraDatos>> listaComprasByFecha(DateTime fechaInicio, DateTime fechaFin)
         {
             var result = new List<CompraDatos>();

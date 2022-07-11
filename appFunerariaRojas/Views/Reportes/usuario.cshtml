@@ -1,0 +1,40 @@
+﻿@{ 
+    Layout = null;
+}
+
+@model appFunerariaRojas.Models.Entity.Usuario
+
+<html>
+<head>
+    <title>Href Attribute Example</title>
+</head>
+<body>
+
+    @for (int i = 0; i <= 100 - 1; i++)
+    {
+    <table>
+        <thead>
+            <tr>
+                <th>Datos1</th>
+                <th>Datos1</th>
+                <th>Datos1</th>
+                <th>Datos1</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>Datos1</td>
+            <td>Datos1</td>
+            <td>Datos1</td>
+            <td>Datos1</td>
+        </tr>
+        <tbody>
+        </tbody>
+    </table>
+
+        <h2>usuario: @Model.Id</h2>
+        <h2>usuario: @Model.IdRol</h2>
+        <h2>usuario: @Model.Nombre</h2>
+    }
+
+</body>
+</html>
