@@ -113,7 +113,7 @@ namespace appFunerariaRojas.Data
             }
         }
 
-        public async Task<List<CompraDatos>> listaComprasByFecha(DateTime fechaInicio, DateTime fechaFin)
+        public async Task<List<CompraDatos>> listaComprasByFecha(DateTime fechaInicio, DateTime fechaFin, string id_proveedor, string id_usuario)
         {
             var result = new List<CompraDatos>();
 
@@ -121,13 +121,19 @@ namespace appFunerariaRojas.Data
             {
                 await con.OpenAsync();
 
-                string sql = "SELECT compra.id, compra.numero, compra.id_proveedor, compra.id_usuario, "
-                    + "compra.fecha, compra.hora, compra.cocepto, compra.estado, "
-                    + "proveedor.razon_social, proveedor.nit, usuario.nombre, usuario.appaterno, usuario.apmaterno "
-                    + "FROM compra INNER JOIN proveedor ON compra.id_proveedor = proveedor.id "
-                    + "INNER JOIN usuario ON usuario.id = compra.id_usuario "
-                    + "WHERE compra.fecha BETWEEN @fecha1 AND @fecha2 AND compra.estado=True "
-                    + "ORDER BY compra.fecha DESC ";
+                string queryUsuario = id_usuario != "0" ? " AND compra.id_usuario='" + id_usuario + "' ": "";
+                string queryProveedor = id_proveedor != "0" ? " AND compra.id_proveedor='" + id_proveedor + "' " : "";
+
+                string sql = "SELECT compra.id, compra.numero, compra.fecha, compra.hora, "
+                           + "compra.cocepto, usuario.id as 'id_usuario', usuario.id_rol, usuario.nombre, "
+                           + "usuario.appaterno, usuario.apmaterno, proveedor.id as 'id_proveedor', proveedor.nit, "
+                           + "proveedor.razon_social, sum(compra_detalle.precio * compra_detalle.cantidad) as 'total' "
+                           + "FROM compra INNER JOIN compra_detalle ON compra.id = compra_detalle.id_compra "
+                           + "INNER JOIN proveedor ON compra.id_proveedor = proveedor.id "
+                           + "INNER JOIN usuario ON usuario.id = compra.id_usuario "
+                           + "WHERE compra.fecha BETWEEN @fecha1 AND @fecha2 AND compra.estado = True "
+                           + queryUsuario + queryProveedor
+                           + "GROUP BY compra.id ORDER BY compra.fecha DESC ";
 
                 using(var cmd = new MySqlCommand(sql, con))
                 {
@@ -161,14 +167,22 @@ namespace appFunerariaRojas.Data
 
                             oCompraDatos.proveedor = oProveedor;
 
-                            var usuario = new Usuario
+                            var usuario = new UsuarioRolModel
                             {
-                                Nombre = Convert.ToString(drd["nombre"]),
-                                Appaterno = Convert.ToString(drd["appaterno"]),
-                                Apmaterno = Convert.ToString(drd["apmaterno"]),
+                                rol = new Rol {
+                                    nombre = Convert.ToInt32(drd["id_rol"]) == 1 ? "Administrador" : "Vendedor"
+                                },
+                                usuario = new Usuario {
+                                    Nombre = Convert.ToString(drd["nombre"]),
+                                    Appaterno = Convert.ToString(drd["appaterno"]),
+                                    Apmaterno = Convert.ToString(drd["apmaterno"]),
+                                }
                             };
 
+                            oCompraDatos.fecha = Convert.ToDateTime(oCompra.Fecha).ToString("dd/MMMM/yyyy");
+                            oCompraDatos.hora = oCompra.Hora.Value.Hours.ToString("00") + ":" + oCompra.Hora.Value.Minutes.ToString("00");
                             oCompraDatos.usuario = usuario;
+                            oCompraDatos.total = Convert.ToDecimal(drd["total"]);
 
                             result.Add(oCompraDatos);
                         }

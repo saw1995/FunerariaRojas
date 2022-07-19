@@ -2,6 +2,11 @@
 @{
     ViewData["Title"] = "Compras";
     Layout = "~/Views/Admin/Index.cshtml";
+
+    int indexMes = (int)ViewBag.indexMes;
+
+    var Usuarios = (List<appFunerariaRojas.Models.UsuarioRolModel>)ViewBag.Usuarios;
+    var Proveedores = (List<appFunerariaRojas.Models.Entity.Proveedor>)ViewBag.Proveedores;
 }
 
 
@@ -36,41 +41,69 @@
                             </div>
 
                             <div class="col-12 col-md-6 text-right">
-                                <button class="btn btn-primary" data-toggle="modal" onclick="window.location.href='@Url.Action("Compras", "Inventario")'">Agregar Nueva Compra</button>
+                                <button class="btn btn-primary" data-toggle="modal" onclick="window.location.href='@Url.Action("AgregarCompra", "Inventario")'">Agregar Nueva Compra</button>
                             </div>
 
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="form-group col-12 col-md-3">
+                                <label for="exampleInputEmail1">MES:</label>
+                                <select class="form-control" id="cbMes" onchange="listaComprasByFecha()">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-12 col-md-3">
+                                <label for="exampleInputEmail1">Proveedor:</label>
+                                <select class="form-control" id="cbProveedor" onchange="listaComprasByFecha()">
+                                    <option value="0">Todos</option>
+                                    @foreach (var proveedor in Proveedores)
+                                    {
+                                        <option value="@proveedor.Id">@(proveedor.Nit + " - " + proveedor.RazonSocial)</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group col-12 col-md-3">
+                                <label for="exampleInputEmail1">Usuario:</label>
+                                <select class="form-control" id="cbUsuario" onchange="listaComprasByFecha()">
+                                    <option value="0">Todos</option>
+                                    @foreach (var usuario in Usuarios)
+                                    {
+                                        <option value="@usuario.usuario.Id">@(usuario.usuario.Ci + " - " + @usuario.usuario.Nombre + " " + @usuario.usuario.Appaterno)</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
 
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th style="width: 10px">#</th>
-                                        <th class="text-center" style="width: 80px">NIT/CI</th>
-                                        <th class="text-center">Ciudad</th>
-                                        <th class="text-center">Razón Social</th>
-                                        <th class="text-center" style='width:80px;'>Teléfono</th>
-                                        <th class="text-center">Dirección</th>
+                                        <th style="width: 15px">#</th>
+                                        <th class="text-center" style="width: 50px">Nº Compra</th>
+                                        <th class="text-center" style="width: 60px">Fecha</th>
+                                        <th class="text-center">Concepto</th>
+                                        <th class="text-center" style='width:150px;'>Proveedor</th>
+                                        <th class="text-center" style='width:150px;'>Usuario</th>
+                                        <th class="text-right" style="width: 100px">TOTAL</th>
                                         <th style='width:50px;'></th>
                                     </tr>
                                 </thead>
 
-                                <tbody>
-                                    <tr>s
-                                        <td>(i + 1)</td>
-                                        <td>proveedores[i].Nit</td>
-                                        <td>proveedores[i].Ciudad</td>
-                                        <td>proveedores[i].RazonSocial</td>
-                                        <td>[i].Telefono</td>
-                                        <td>proveedores[i].Direccion</td>
-                                        <td class='text-right py-0 align-middle'>
-                                            <div class='btn-group btn-group-sm'>
-                                                <a href='javascript:void(0);' onclick='' class='btn btn-info'><i class='fas fa-pencil-alt'></i></a>
-                                                <a href='javascript:void(0);' onclick='eliminarProveedor(proveedores[i].Id)' class='btn btn-danger'><i class='fas fa-trash'></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                   
+                                <tbody id="dtCompras">
                                 </tbody>
 
                             </table>
@@ -89,104 +122,62 @@
 
 @section scripts{
     <script>
-    function agregarProveedor() {
 
-        var _nit = document.getElementById("txtNit").value;
-        var _razonSocial = document.getElementById("txtRazonSocial").value;
-        var _telefono = document.getElementById("txtTelefono").value;
-        var _ciudad = document.getElementById("cbCiudad").value;
-        var _direccion = document.getElementById("txtDireccion").value;
+        $(document).ready(function () {
 
-        if (_nit == "") {
-            Swal.fire({
-                icon: 'error', title: 'Nuevo Proveedor', text: "El Campo NIT no puede estar vacío."
-            });
-        }
-        else if (_razonSocial == "") {
-            Swal.fire({
-                icon: 'error', title: 'Nuevo Proveedor', text: "El campo Razon social no puede estar vacío, intente nuevamente."
-            });
-        }
-        else if (_telefono == "") {
-            Swal.fire({
-                icon: 'error', title: 'Nuevo Proveedor', text: "El campo Teléfono no puede estar vacío, intente nuevamente."
-            });
-        }
-        else if (_direccion == "") {
-            Swal.fire({
-                icon: 'error', title: 'Nuevo Proveedor', text: "El campo Direccion no puede estar vacío, intente nuevamente."
-            });
-        }
-        else {
+            document.getElementById("cbMes").value = "@indexMes";
+
+            listaComprasByFecha();
+
+        });
+
+        function listaComprasByFecha() {
+            var _mes = document.getElementById("cbMes").value;
+            var _idProveedor = document.getElementById("cbProveedor").value;
+            var _idUsuario = document.getElementById("cbUsuario").value;
 
             var parametros = {
-                "Nit": _nit,
-                "Ciudad": _ciudad,
-                "RazonSocial": _razonSocial,
-                "Telefono": _telefono,
-                "Direccion": _direccion
+                "mes": _mes,
+                "id_proveedor": _idProveedor,
+                "id_usuario": _idUsuario
             };
 
-            var _url = "insertarProveedor";
+            var _url = "listaComprasByFecha";
 
             $.ajax({
                 url: _url,
                 type: "POST",
                 data: parametros,
                 success: function (data) {
-                   if (data.estado == true) {
+                    console.log(data)
+                    let filas = "";
+                    for (let i = 0; i <= data.length - 1; i++) {
 
-                        window.location.href = '@Url.Action("Proveedor","Inventario")';
+                        filas = filas +
+                        "<tr>" +
+                        "<td>" + (i + 1).toString() + "</td>" +
+                        "<td class='text-center'>" + data[i].datos.numero + "</td>" +
+                        "<td class='text-center'><p>" + data[i].fecha + "</p><span>" + data[i].hora +"</span></td>" +
+                        "<td>" + data[i].datos.cocepto + "</td>" +
+                        "<td class='text-center'><p>" + data[i].proveedor.nit + "</p><span>" + data[i].proveedor.razonSocial + "</span></td>" +
+                        "<td class='text-center'><p>" + data[i].usuario.usuario.nombre + " " + data[i].usuario.usuario.appaterno + "</p><span>" + data[i].usuario.rol.nombre + "</span></td>" +
+                        "<td class='text-right'>" + data[i].total.toFixed(2) + "</td>" +
+                        "<td class='text-right py-0 align-middle'>" +
+                        "<div class='btn-group btn-group-sm' >" +
 
-                        Swal.fire({
-                            icon: 'success', title: 'Nuevo Proveedor', text: "Se agrego con exito la categoria " + _nombre
-                        });
+                        "<a href='javascript:void(0);' onclick='alertUsuario(" + data[i].datos + ")' " +
+                        "class='btn btn-info'><i class='fas fa-pencil-alt'></i></a>" +
+
+                        "<a href='javascript:void(0);' onclick='eliminarCategoria(" + data[i].datos.id + ")' " +
+                        "class='btn btn-danger' > <i class='fas fa-trash'></i></a > " +
+
+                        "</div></td>" +
+                        "</tr>"
                     }
-                    else {
-                        Swal.fire({
-                            icon: 'error', title: 'Nuevo Proveedor', text: "Error: " + data.mensaje
-                        });
-                    }
+                    document.getElementById("dtCompras").innerHTML = filas;
                 }
             });
         }
-    }
 
-    function eliminarProveedor(_id) {
-        var parametros = {
-            "id": _id
-        };
-
-        var _url = "actualizarEstadoByIdProveedor";
-
-        Swal
-            .fire({
-                title: "Eliminar Categoía",
-                text: "¿Esta seguro de eliminar la proveedor seleccionado?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: "Sí, eliminar",
-                cancelButtonText: "Cancelar",
-            })
-            .then(resultado => {
-                if (resultado.value == true) {
-                    $.ajax({
-                        url: _url,
-                        type: "POST",
-                        data: parametros,
-                        success: function (data) {
-                            if (data.estado == true) {
-                                window.location.href = '@Url.Action("Proveedor","Inventario")';
-                            }
-                            else {
-                                Swal.fire({
-                                    icon: 'error', title: "Eliminar Proveedor", text: "error: " + data.mensaje
-                                });
-                            }
-                        }
-                    });
-                }
-            });
-    }
     </script>
 }

@@ -13,13 +13,19 @@ namespace appFunerariaRojas.Controllers
 {
     public class InventarioController : Controller
     {
-        public IActionResult Compras()
+        public async Task<IActionResult> Compras()
         {
             ViewBag.btnMenu = 4;
             ViewBag.btnSubMenu = "E";
 
             ViewBag.usuarioData = new UsuarioRolDesarialize()
                 .usuarioRolModeloSession(Convert.ToString(HttpContext.Session.GetString("usuario")));
+
+            DateTime fecha = DateTime.Now;
+            ViewBag.indexMes = fecha.Month;
+
+            ViewBag.Usuarios = await new UsuarioData().listaUsuarioByEstado(1);
+            ViewBag.Proveedores = await new ProveedorData().listaProveedorByEstado(true);
 
             return View();
         }
@@ -97,9 +103,14 @@ namespace appFunerariaRojas.Controllers
         }
 
         [HttpPost]
-        public async Task<List<CompraDatos>> listaComprasByFecha(DateTime fecha_inicio, DateTime fecha_final)
+        public async Task<List<CompraDatos>> listaComprasByFecha(int mes, string id_proveedor, string id_usuario)
         {
-            return await new ComprasData().listaComprasByFecha(fecha_inicio, fecha_final);
+            DateTime fechaHoy = DateTime.Now;
+
+            DateTime fecha_inicio = Convert.ToDateTime("01/" + mes + "/" + fechaHoy.Year);
+            DateTime fecha_final = Convert.ToDateTime(fecha_inicio).AddMonths(1).AddDays(-1);
+
+            return await new ComprasData().listaComprasByFecha(fecha_inicio, fecha_final, id_proveedor, id_usuario);
         }
 
         [HttpPost]
