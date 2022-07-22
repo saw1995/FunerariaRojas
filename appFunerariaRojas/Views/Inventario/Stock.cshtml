@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Stock";
     Layout = "~/Views/Admin/Index.cshtml";
+
+    var Categorias = (List<appFunerariaRojas.Models.Entity.Categoria>)ViewBag.Categorias;
 }
 
 <section class="content-header">
@@ -30,9 +32,21 @@
                     <div class="card-body">
 
                         <div class="row mb-2">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12">
                                 <h3>STOCK de productos</h3>
                             </div>
+
+                            <div class="form-group col-12 col-md-3">
+                                <label for="exampleInputEmail1">CATEGORÍA:</label>
+                                <select class="form-control" id="cbCategoria" onchange="listaStocks()">
+                                    <option value="todos">TODOS</option>
+                                    @foreach (var categoria in Categorias)
+                                    {
+                                        <option value="@categoria.Id">@categoria.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+
                         </div>
 
                         <div class="table-responsive">
@@ -40,15 +54,16 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10px">#</th>
-                                        <th class="text-center" style="width: 100px">Código</th>
-                                        <th class="text-center">Nombre</th>
-                                        <th class="text-center">Descripción</th>
-                                        <th class="text-center" style='width:50px;'>Cajón</th>
-                                        <th style='width:50px;'></th>
+                                        <th class="text-center" style='width:150px;'>Categoría</th>
+                                        <th class="text-center" style='width:50px;'>Ataúd</th>
+                                        <th class="text-center" style='width:120px;'>Código</th>
+                                        <th class="text-left">Descripción</th>
+                                        <th class="text-center" style='width:80px;'>U.Medida</th>
+                                        <th class="text-center" style='width:100px;'>Stock</th>
                                     </tr>
                                 </thead>
 
-                                <tbody id="dtCategoria">
+                                <tbody id="dtStock">
                                 </tbody>
 
                             </table>
@@ -68,50 +83,62 @@
     <script>
 
         $(document).ready(function () {
-            listaCategorias();
+            listaStocks();
         });
 
-        function listaCategorias() {
+        function listaStocks() {
+            var cbcategoria = document.getElementById("cbCategoria").value;
+
             var parametros = {
-                "estado": 1
+                "id_categoria": cbcategoria
             };
 
-            var _url = "listaCategoriasByEstado";
+            var _url = "ListaProductosItemStockByCategoria";
 
             $.ajax({
                 url: _url,
                 type: "POST",
                 data: parametros,
                 success: function (data) {
+                    
                     let filas = "";
                     for (let i = 0; i <= data.length - 1; i++) {
 
+                        let descripcion = data[i].item.descripcion + " Acabado: " + data[i].item.cajonAcabado + " Detalle: " + data[i].item.cajonDetalle
+                            + " color " + data[i].item_presentacion.color + " tamaño " + data[i].item_presentacion.tamaño;
+
                         let cajonValida = "<td class='project-state text-center'><span class='badge badge-success'>SÍ</span></td>";
 
-                        if (data[i]["cajon"] == false) {
+                        if (data[i].categoria.cajon == false) {
                             cajonValida = "<td class='project-state text-center'><span class='badge badge-danger'>NO</span></td>";
+                            descripcion = data[i].item.descripcion;
+                        }
+
+                        let stock = data[i].item_presentacion.stock;
+
+                        let mostrarStock = "";
+
+                        if (stock >= 20) {
+                            mostrarStock = "<span class='badge badge-success'>" + stock + "</span>";
+                        } else if (stock >= 10) {
+                            mostrarStock = "<span class='badge badge-warning'>" + stock + "</span>";
+                        } else {
+                            mostrarStock = "<span class='badge badge-danger'>" + stock + "</span>";
                         }
 
                         filas = filas +
                         "<tr>" +
                         "<td>" + (i + 1).toString() + "</td>" +
-                        "<td class='text-center'>" + data[i]["id"] + "</td>" +
-                        "<td>" + data[i]["nombre"] + "</td>" +
-                        "<td>" + data[i]["descripcion"] + "</td>" +
+                        "<td class='text-center'>" + data[i].categoria.nombre + "</td>" +
                         cajonValida +
-                        "<td class='text-right py-0 align-middle'>" +
-                        "<div class='btn-group btn-group-sm' >" +
-
-                        "<a href='javascript:void(0);' onclick='alertUsuario(" + data[i]["id"] + ")' " +
-                        "class='btn btn-info'><i class='fas fa-pencil-alt'></i></a>" +
-
-                        "<a href='javascript:void(0);' onclick='eliminarCategoria(" + data[i]["id"] + ")' " +
-                        "class='btn btn-danger' > <i class='fas fa-trash'></i></a > "
-
-                        "</div></td>" +
+                        "<td class='text-center'>" + data[i].item.codigo + "</td>" +
+                            "<td>" + descripcion + "</td>" +
+                            "<td class='text-center'>" + data[i].item_presentacion.unidadMedida + "</td>" +
+                            "<td class='text-center'>" + mostrarStock + "</td>" +
                         "</tr>"
                     }
-                    document.getElementById("dtCategoria").innerHTML = filas;
+
+                    document.getElementById("dtStock").innerHTML = filas;
                 }
             });
         }

@@ -300,5 +300,70 @@ namespace appFunerariaRojas.Data
             return resultado;
         }
 
+        public async Task<List<ProductoItemStock>> ListaProductosItemStockByCategoria(string id_categoria)
+        {
+            var response = new List<ProductoItemStock>();
+
+            using(var con = new MySqlConnection(new Conexion().cn()))
+            {
+                await con.OpenAsync();
+
+                string queryCategoria = id_categoria == "todos" ? "" : "AND item.id_categoria='" + id_categoria + "'";
+
+                string sql = "SELECT categoria.id as 'id_categoria', categoria.nombre as 'categoria', "
+                    + "categoria.descripcion as 'categoria_descripcion', categoria.cajon, "
+                    + "item.id as 'id_item', item.codigo, item.descripcion, item.cajon_detalle, item.cajon_acabado, "
+                    + "item_presentacion.id as 'id_item_presentacion', item_presentacion.color, item_presentacion.unidad_medida, "
+                    + "item_presentacion.tamaño, item_presentacion.precio_compra, item_presentacion.precio_venta, item_presentacion.stock "
+                    + "FROM categoria INNER JOIN item ON item.id_categoria = categoria.id "
+                    + "INNER JOIN item_presentacion ON item_presentacion.id_item = item.id "
+                    + "WHERE item_presentacion.estado=True " + queryCategoria + " ORDER BY item_presentacion.id DESC";
+                
+                using(var cmd = new MySqlCommand(sql, con))
+                {
+                    using(var drd = await cmd.ExecuteReaderAsync())
+                    {
+                        while(await drd.ReadAsync())
+                        {
+                            var Item = new ProductoItemStock
+                            {
+                                categoria = new Categoria
+                                {
+                                    Id = Convert.ToString(drd["id_categoria"]),
+                                    Nombre = Convert.ToString(drd["categoria"]),
+                                    Descripcion = Convert.ToString(drd["categoria_descripcion"]),
+                                    Cajon = Convert.ToBoolean(drd["cajon"])
+                                },
+                                item = new Item
+                                {
+                                    Id = Convert.ToString(drd["id_item"]),
+                                    Codigo = Convert.ToString(drd["codigo"]),
+                                    Descripcion = Convert.ToString(drd["descripcion"]),
+                                    CajonDetalle = Convert.ToString(drd["cajon_detalle"]),
+                                    CajonAcabado = Convert.ToString(drd["cajon_acabado"]),
+                                },
+                                item_presentacion = new ItemPresentacion
+                                {
+                                    Id = Convert.ToString(drd["id_item_presentacion"]),
+                                    Color = Convert.ToString(drd["color"]),
+                                    UnidadMedida = Convert.ToString(drd["unidad_medida"]),
+                                    Tamaño = Convert.ToString(drd["tamaño"]),
+                                    PrecioCompra = Convert.ToDecimal(drd["precio_compra"]),
+                                    PrecioVenta = Convert.ToDecimal(drd["precio_venta"]),
+                                    Stock = Convert.ToInt32(drd["stock"])
+                                }
+                            };
+
+                            response.Add(Item);
+                        }
+                    }
+                }
+
+            }
+
+            return response;
+        }
+
+
     }
 }

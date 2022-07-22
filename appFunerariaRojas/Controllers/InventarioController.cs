@@ -67,13 +67,16 @@ namespace appFunerariaRojas.Controllers
             return View();
         }
 
-        public IActionResult Stock()
+        public async Task<IActionResult> Stock()
         {
             ViewBag.btnMenu = 4;
             ViewBag.btnSubMenu = "H";
 
             ViewBag.usuarioData = new UsuarioRolDesarialize()
                 .usuarioRolModeloSession(Convert.ToString(HttpContext.Session.GetString("usuario")));
+
+            ViewBag.Categorias = await new CategoriaData().listaCategoriasByEstado(true);
+
             return View();
         }
 
@@ -117,6 +120,12 @@ namespace appFunerariaRojas.Controllers
         public async Task<List<ItemDatos>> listaProductosByCategoria(string id_categoria)
         {
             return await new ProductoData().listaProductosByCategoria(true, id_categoria);
+        }
+
+        [HttpPost]
+        public async Task<List<ProductoItemStock>> ListaProductosItemStockByCategoria(string id_categoria)
+        {
+            return await new ProductoData().ListaProductosItemStockByCategoria(id_categoria);
         }
 
         [HttpPost]
